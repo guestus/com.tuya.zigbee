@@ -7,21 +7,21 @@ const { debug, CLUSTER } = require('zigbee-clusters');
 class temphumidsensor extends ZigBeeDevice {
 
 	async onNodeInit({zclNode}) {
-
+		this.enableDebug();
 		this.printNode();
 
-		if (this.isFirstInit()){
-			await this.configureAttributeReporting([
-				{
-					endpointId: 1,
-					cluster: CLUSTER.POWER_CONFIGURATION,
-					attributeName: 'batteryPercentageRemaining',
-					minInterval: 65535,
-					maxInterval: 0,
-					minChange: 0,
-				}
-			]);
-		}
+		// if (this.isFirstInit()){
+		// 	await this.configureAttributeReporting([
+		// 		{
+		// 			endpointId: 1,
+		// 			cluster: CLUSTER.POWER_CONFIGURATION,
+		// 			attributeName: 'batteryPercentageRemaining',
+		// 			minInterval: 10,
+		// 			maxInterval: 65535,
+		// 			minChange: 0,
+		// 		}
+		// 	]);
+		// }
 
 		// measure_temperature
 		zclNode.endpoints[1].clusters[CLUSTER.TEMPERATURE_MEASUREMENT.NAME]
