@@ -7,21 +7,9 @@ const { debug, CLUSTER } = require('zigbee-clusters');
 class temphumidsensor extends ZigBeeDevice {
 
 	async onNodeInit({zclNode}) {
+		debug(true);
 		this.enableDebug();
 		this.printNode();
-
-		// if (this.isFirstInit()){
-		// 	await this.configureAttributeReporting([
-		// 		{
-		// 			endpointId: 1,
-		// 			cluster: CLUSTER.POWER_CONFIGURATION,
-		// 			attributeName: 'batteryPercentageRemaining',
-		// 			minInterval: 10,
-		// 			maxInterval: 65535,
-		// 			minChange: 0,
-		// 		}
-		// 	]);
-		// }
 
 		// measure_temperature
 		zclNode.endpoints[1].clusters[CLUSTER.TEMPERATURE_MEASUREMENT.NAME]
@@ -34,6 +22,22 @@ class temphumidsensor extends ZigBeeDevice {
 		// measure_battery // alarm_battery
 		zclNode.endpoints[1].clusters[CLUSTER.POWER_CONFIGURATION.NAME]
 		.on('attr.batteryPercentageRemaining', this.onBatteryPercentageRemainingAttributeReport.bind(this));
+
+		if (this.isFirstInit()) {
+			try {
+				await this.configureAttributeReporting([
+				{
+					endpointId: 1,
+					cluster: CLUSTER.POWER_CONFIGURATION,
+					attributeName: 'batteryPercentageRemaining',
+					minInterval: 10,
+					maxInterval: 65535,
+					minChange: 0,
+				}
+			]) } catch (err) {
+				this.error('failed to configureAttributeReporting', err);
+          		}
+		}
 
 	}
 
